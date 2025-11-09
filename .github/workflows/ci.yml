@@ -1,18 +1,16 @@
 name: CI - Build Workflow
 
 on:
-push:
-branches: [ main, dev ]
-pull_request:
-
+  push:
+    branches: [ main, dev ]
+  pull_request:
 
 jobs:
-build:
-runs-on: ubuntu-latest
-steps:
-- name: Checkout repository
-uses: actions/checkout@v4
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
 
-
-- name: Run build simulation
-run: echo "Build completed successfully!"
+      - name: Run build simulation
+        run: echo "Build completed successfully!"
