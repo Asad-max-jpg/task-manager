@@ -1,0 +1,41 @@
+services:
+  # --- Web App Container ---
+  app:
+    build: .
+    container_name: task_manager_app
+    ports:
+      - "8080:80"
+    restart: unless-stopped
+
+  # --- cAdvisor (container metrics collector) ---
+  cadvisor:
+    image: gcr.io/cadvisor/cadvisor:latest
+    container_name: cadvisor_task_manager
+    ports:
+      - "8081:8080"
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+      - /var/lib/docker/:/var/lib/docker:ro
+    restart: unless-stopped
+
+  # --- Prometheus (metrics storage) ---
+  prometheus:
+    image: prom/prometheus:latest
+    container_name: prometheus_task_manager
+    ports:
+      - "9090:9090"
+    volumes:
+      - ./prometheus.yml:/etc/prometheus/prometheus.yml
+    restart: unless-stopped
+    depends_on:
+      - cadvisor
+
+  # --- Grafana (visual dashboards) ---
+  grafana:
+    image: grafana/grafana-oss:latest
+    container_name: grafana_task_manager
+    ports:
+      - "3000:3000"
+    restart: unless-stopped
+    depends_on:
+      - prometheus
